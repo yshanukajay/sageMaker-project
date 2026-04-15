@@ -1,21 +1,20 @@
 
 from sklearn.ensemble import RandomForestClassifier
-from sklearn.metrics import (accuracy_score,
-                            classification_report,
-                            confusion_matrix,
-                            precision_score)
+from sklearn.metrics import (
+    accuracy_score,
+    classification_report,
+    confusion_matrix,
+    precision_score,
+)
 import sklearn
 import joblib
-import boto3
-import pathlib
-from io import StringIO 
 import argparse
 import os
 import pandas as pd
-import numpy as np
 
 def model_fn(model_dir):
-    model=joblib.load(os.path.join(model_dir, "model.joblib"))
+    model = joblib.load(os.path.join(model_dir, "model.joblib"))
+    return model
 
 
 if __name__ == "__main__":
@@ -26,6 +25,7 @@ if __name__ == "__main__":
     ## hyperparameters
     parser.add_argument("--n-estimators", type=int, default=100)
     parser.add_argument("--max-depth", type=int, default=5)
+    parser.add_argument("--random-state", type=int, default=42)
 
     ## data, model directories
     parser.add_argument("--model-dir", type=str, default=os.environ.get("SM_MODEL_DIR"))
@@ -75,12 +75,12 @@ if __name__ == "__main__":
     print()
 
     model = RandomForestClassifier(
-                    n_estimators=args.n_estimators,
-                    max_depth=args.max_depth,
-                    random_state=42,
-                    verbose=1,
-                    n_jobs=-1
-            )
+        n_estimators=args.n_estimators,
+        max_depth=args.max_depth,
+        random_state=args.random_state,
+        verbose=1,
+        n_jobs=-1,
+    )
     model.fit(X_train, y_train)
     print()
 
